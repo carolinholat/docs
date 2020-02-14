@@ -1,9 +1,9 @@
-.App {
+/*.App {
     height: 100%;
     display: flex;
     flex-direction: column;
     overflow: auto;
-}
+}*/
 
 .refresh-spin {
     animation: refresh-spin infinite 1s linear;
@@ -16,8 +16,11 @@
 #root {
     overflow: auto;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
+/*
 .App-main {
     background-color: #ffffff;
     display: flex;
@@ -28,7 +31,7 @@
     margin: 12px auto;
     padding: 0 18px;
     min-height: 60vh;
-}
+}*/
 
 .hide-sm {
     position: absolute;
@@ -41,11 +44,12 @@
     border: 0;
 }
 
+/*
 @media (min-width: 800px) {
     .App-main {
         min-height: auto;
     }
-}
+}*/
 
 @media (min-width: 400px) {
     .hide-sm {
@@ -60,6 +64,7 @@
     }
 }
 
+/*
 .App-header {
     display: flex;
     flex-direction: column;
@@ -70,11 +75,8 @@
     overflow: auto;
     width: 100%;
     flex-shrink: 0;
-}
+}*/
 
-.App-link {
-    color: #61dafb;
-}
 
 @keyframes refresh-spin {
     from {
