@@ -20,8 +20,7 @@ const ListItemIcon = props => {
     return <ListItemIc classes={classes} {...props}/>;
 };
 
-function ListItemLink({icon, primary, to}) {
-
+function ListItemLink({icon, primary, to, style, classes = {}, children}) {
     const renderLink = React.useMemo(
         () => React.forwardRef((itemProps, ref) =>
             <RouterLink to={to} ref={ref} {...itemProps} />
@@ -29,10 +28,11 @@ function ListItemLink({icon, primary, to}) {
         [to],
     );
 
-    return (<ListItem button component={renderLink}>
+    return <ListItem button component={renderLink} style={style} className={classes.listItem ? classes.listItem : undefined}>
         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
-        <ListItemText primary={primary}/>
-    </ListItem>);
+        <ListItemText primary={primary} className={classes.listItemText ? classes.listItemText : undefined}/>
+        {children}
+    </ListItem>;
 }
 
 const LinkList = ({children}) => {
@@ -41,4 +41,4 @@ const LinkList = ({children}) => {
 
 const Link = ({primary, ...props}) => <MuiLink component={RouterLink} {...props} children={primary}/>;
 
-export {LinkList, ListItemLink, Link}
+export {ListItemIcon, LinkList, ListItemLink, Link}

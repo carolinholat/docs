@@ -8,8 +8,9 @@ import {InvertColors as InvertColorsIcon, Menu as MenuIcon} from '@material-ui/i
 import {I18nSwitch} from "../../lib/I18nSwitch";
 import {AppDrawer} from "./Drawer";
 import {useThemer} from "../../lib/Theme";
+import Typography from "@material-ui/core/Typography";
 
-const Header = ({setDrawerOpen}) => {
+const Header = ({setDrawerOpen, title}) => {
     const classes = {};
     const switchTheme = useThemer();
 
@@ -25,7 +26,11 @@ const Header = ({setDrawerOpen}) => {
                 <MenuIcon className={classes.badgeIcon}/>
             </IconButton>
 
-            <I18nSwitch style={{marginLeft: 'auto'}}/>
+            {title ? <Typography component="h1" variant="h6" style={{flexShrink: 0, margin: '0 auto'}}>
+                {title}
+            </Typography> : null}
+
+            <I18nSwitch style={{marginLeft: title ? 0 : 'auto'}}/>
 
             <IconButton color="inherit" onClick={switchTheme}>
                 <InvertColorsIcon className={classes.badgeIcon}/>
@@ -34,12 +39,12 @@ const Header = ({setDrawerOpen}) => {
     </AppBar>;
 };
 
-const Layout = ({children}) => {
+const Layout = ({children, title}) => {
     const [drawerOpen, setDrawerOpen] = React.useState(true);
 
     return <React.Fragment>
         <CssBaseline/>
-        <Header setDrawerOpen={setDrawerOpen}/>
+        <Header setDrawerOpen={setDrawerOpen} title={title}/>
         <div style={{display: 'flex', overflow: 'auto', flexGrow: 1}}>
             <AppDrawer open={drawerOpen}/>
             <div style={{display: 'flex', flexDirection: 'column', overflow: 'auto', flexGrow: 1}}>

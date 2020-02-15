@@ -26,6 +26,15 @@ const themeDark = createMuiTheme({
         action: {
             hoverOpacity: 0.2,
         },
+    },
+    typography: {
+        fontSize: 14,
+        h1: {
+            fontSize: '3rem'
+        },
+        h2: {
+            fontSize: '2.75rem'
+        }
     }
 });
 
@@ -33,7 +42,7 @@ const themeLight = createMuiTheme({
     palette: {
         type: "light",
         primary: {
-            main: "#0599b2",
+            main: "#0590a7",
             dark: '#033944',
         },
         secondary: {
@@ -52,6 +61,15 @@ const themeLight = createMuiTheme({
         action: {
             hoverOpacity: 0.2,
         },
+    },
+    typography: {
+        fontSize: 14,
+        h1: {
+            fontSize: '3rem'
+        },
+        h2: {
+            fontSize: '2.75rem'
+        }
     }
 });
 

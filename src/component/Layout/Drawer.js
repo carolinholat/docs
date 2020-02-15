@@ -1,8 +1,12 @@
 import clsx from "clsx";
-import {makeStyles, Divider, List, Drawer} from "@material-ui/core";
+import {makeStyles, Divider, List, Drawer, Collapse} from "@material-ui/core";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
 import React from "react";
 import {useTranslation} from 'react-i18next';
-import {ListItemLink} from "../Link";
+import {ListItemIcon, ListItemLink} from "../Link";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItem from "@material-ui/core/ListItem";
+import {contentDocs} from "../../content/docs";
 
 const drawerWidth = 240;
 
@@ -30,12 +34,29 @@ const useStyles = makeStyles(theme => ({
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,
         }),
-        width: theme.spacing(7),
+        width: 0,
         [theme.breakpoints.up('sm')]: {
-            width: theme.spacing(9),
+            width: 0,
         },
     },
 }));
+
+const CollapseDrawer = ({toggle, icon, children}) => {
+    const [open, setOpen] = React.useState(true);
+
+    return <React.Fragment>
+        <ListItem button onClick={() => setOpen(o => !o)}>
+            {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
+            <ListItemText primary={toggle}/>
+            {open ? <ExpandLess/> : <ExpandMore/>}
+        </ListItem>
+
+
+        <Collapse in={open} timeout="auto" unmountOnExit>
+            {children}
+        </Collapse>
+    </React.Fragment>
+};
 
 const AppDrawer = ({open}) => {
     const classes = useStyles();
@@ -51,7 +72,13 @@ const AppDrawer = ({open}) => {
     >
         <List>
             <ListItemLink to={'/' + i18n.language} primary={'Home'}/>
-            <ListItemLink to={'/' + i18n.language + '/docs'} primary={'Documentation'}/>
+            <CollapseDrawer toggle={'Documentation'}>
+                <List component="div" disablePadding>
+                    {contentDocs.map(([id, label], i) =>
+                        <ListItemLink key={i} to={'/' + i18n.language + '/docs/' + id} primary={label} style={{paddingLeft: 32}}/>
+                    )}
+                </List>
+            </CollapseDrawer>
             <ListItemLink to={'/' + i18n.language + '/examples'} primary={'Examples'}/>
         </List>
         <Divider/>

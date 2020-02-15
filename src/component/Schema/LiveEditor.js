@@ -4,10 +4,11 @@ import {Box, Button, Paper, Typography, useTheme} from "@material-ui/core";
 import {DragHandle, SpeakerNotes, SpeakerNotesOff, Add, Remove, FormatSize, FormatShapes, Code, SpaceBar, RestorePage, HorizontalSplit, VerticalSplit} from "@material-ui/icons";
 import {isInvalid, createMap, createOrderedMap, SchemaEditorProvider, SchemaRootRenderer, useSchemaData} from "@ui-schema/ui-schema";
 import {widgets} from "@ui-schema/ds-material";
-import Nav from "../component/Nav";
-import {RichCodeEditor} from "../component/RichCodeEditor";
-import {Markdown} from "../component/Markdown";
-import {PageNotFound} from "../component/PageNotFound";
+import Nav from "../Nav";
+import {RichCodeEditor} from "../RichCodeEditor";
+import {Markdown} from "../Markdown";
+import {PageNotFound} from "../Page/PageNotFound";
+import {useTranslation} from "react-i18next";
 
 const IconInput = ({
                        verticalSplit, title,
@@ -330,6 +331,7 @@ const searchActiveSchema = (schemas, schema) => {
 
 const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) => {
     const history = useHistory();
+    const {i18n} = useTranslation();
 
     let initialVertical = initialLocalBoolean('live-editor-vertical', 800 < window.innerWidth);// Vertical by default for desktop
     let initialRichIde = initialLocalBoolean('live-editor-rich-ide', true);
@@ -371,9 +373,9 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
         setSchema(schemas[i][1]);
         setData(schemas[i][2]);
         setRenderChange(p => p + 1);
-        history.push('/examples/' + (schemas[i][0].split(' ').join('-')));
+        history.push('/' + i18n.language + '/examples/' + (schemas[i][0].split(' ').join('-')));
         // `setValidity` is not needed, as it cleans itself on dismounts and fills itself again on new mounts
-    }, [setActiveSchema, setShowValidity, setSchema, setData, schemas, history]);
+    }, [setActiveSchema, i18n, setShowValidity, setSchema, setData, schemas, history]);
 
     React.useEffect(() => {
         if(infoBox.current) {

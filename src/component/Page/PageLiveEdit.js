@@ -1,15 +1,19 @@
 import React from "react";
-import {Typography} from "@material-ui/core";
+import {Container, Paper, Typography} from "@material-ui/core";
 import LiveEditor from '../Schema/LiveEditor'
-import {Link} from "./Link";
-import {dataMain, dataUser, schemaMain, schemaUser} from "../schemas/demoMain";
-import {dataStepper, schemaStepper} from "../schemas/demoStepper";
+import {Link} from "../Link";
+import {dataMain, dataUser, schemaMain, schemaUser} from "../../schemas/demoMain";
+import {dataStepper, schemaStepper} from "../../schemas/demoStepper";
 import {
     schemaCombining, dataCombining,
     schemaCombiningConditional, dataCombiningConditional,
-} from "../schemas/demoCombining";
-import {dataConditional, dataConditionalAllOf, schemaConditional, schemaConditionalAllOf} from "../schemas/demoConditional";
-import {dataDependencies, dataDependenciesBooleans, schemaDependencies, schemaDependenciesBooleans} from "../schemas/demoDependencies";
+} from "../../schemas/demoCombining";
+import {dataConditional, dataConditionalAllOf, schemaConditional, schemaConditionalAllOf} from "../../schemas/demoConditional";
+import {dataDependencies, dataDependenciesBooleans, schemaDependencies, schemaDependenciesBooleans} from "../../schemas/demoDependencies";
+import {PageTitle} from "../Layout/PageContent";
+import Nav from "../Nav";
+import NavProject from "../NavProject";
+import {Layout} from "../Layout/Layout";
 
 const schemas = [
     ['Main Demo', schemaMain, dataMain, `
@@ -147,20 +151,11 @@ When the property value changes to \`true\` the dependency is applied.
 ];
 
 function PageLiveEdit() {
-    return (
-        <div className="App">
-            <header className="App-header" style={{position: 'relative'}}>
-                <Link to={'/'}
-                      primary={<span role={'img'} style={{fontSize: '1.25rem', display: 'flex', marginLeft: 4}} aria-label={'Home Icon'}>🏠</span>}
-                      style={{display: 'inline-block', position: 'absolute', left: 0}}/>
-                <Typography component={'h1'} variant={'h6'}>
-                    UI-Schema Live-Editor
-                </Typography>
-            </header>
-
+    return <Layout title={'Live-Editor'}>
+        <Container maxWidth={false} fixed style={{display: 'flex', flexDirection: 'column', height: '100%', flexGrow: 2, padding: 0}}>
             <LiveEditor schemas={schemas}/>
-        </div>
-    );
+        </Container>
+    </Layout>;
 }
 
 export default PageLiveEdit
