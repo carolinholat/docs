@@ -1,5 +1,5 @@
 {
-    "name": "@ui-schema/demo-cra",
+    "name": "@ui-schema/docs",
     "version": "0.3.0",
     "private": true,
     "dependencies": {

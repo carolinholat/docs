@@ -35,6 +35,9 @@ const themeDark = createMuiTheme({
         h2: {
             fontSize: '2.75rem'
         }
+    },
+    shape: {
+        borderRadius: 0,
     }
 });
 
@@ -70,6 +73,9 @@ const themeLight = createMuiTheme({
         h2: {
             fontSize: '2.75rem'
         }
+    },
+    shape: {
+        borderRadius: 0,
     }
 });
 

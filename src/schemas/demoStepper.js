@@ -31,7 +31,7 @@ const schemaStepper = createOrderedMap({
             widget: "Step",
             properties: {
                 topics: {
-                    type: "string",
+                    type: "array",
                     widget: "SelectMulti",
                     view: {
                         sizeMd: 3

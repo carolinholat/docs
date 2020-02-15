@@ -4,7 +4,6 @@ import {Box, Button, Paper, Typography, useTheme} from "@material-ui/core";
 import {DragHandle, SpeakerNotes, SpeakerNotesOff, Add, Remove, FormatSize, FormatShapes, Code, SpaceBar, RestorePage, HorizontalSplit, VerticalSplit} from "@material-ui/icons";
 import {isInvalid, createMap, createOrderedMap, SchemaEditorProvider, SchemaRootRenderer, useSchemaData} from "@ui-schema/ui-schema";
 import {widgets} from "@ui-schema/ds-material";
-import Nav from "../Nav";
 import {RichCodeEditor} from "../RichCodeEditor";
 import {Markdown} from "../Markdown";
 import {PageNotFound} from "../Page/PageNotFound";
@@ -20,7 +19,15 @@ const IconInput = ({
     const [hasHover, setHover] = React.useState(false);
 
     return <div
-        style={{margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0', border: '1px solid lightgrey', zIndex: 2, flexShrink: 0, padding: 6, display: 'flex', position: 'relative'}}
+        style={{
+            margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0',
+            border: '1px solid ' + palette.text.primary,
+            zIndex: 2,
+            flexShrink: 0,
+            padding: 6,
+            display: 'flex',
+            position: 'relative'
+        }}
         onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
     >
         {hasFocus || hasHover ? <button
@@ -46,7 +53,7 @@ const IconInput = ({
                    position: 'absolute', zIndex: 2, top: 0, right: 0, bottom: 0, left: 0,
                    background: 'transparent', border: 0, boxSizing: 'border-box',
                    textAlign: 'center', fontSize: '0.9rem', fontFamily: 'Consolas, "Lucida Console", Courier, monospace', fontWeight: 'bold',
-                   width: '100%', height: '100%', paddingBottom: 10,
+                   width: '100%', height: '100%', paddingBottom: 10, color: palette.text.primary,
                }}
                value={value} onChange={e => e.target.value <= max ? onChange(e.target.value * 1) : undefined} min={min} max={max}/>
 
@@ -89,6 +96,48 @@ const unFocus = e => {
     } while(!found && parent);
 };
 
+const DragHandleStyled = () => {
+    const theme = useTheme();
+    return <DragHandle style={{pointerEvents: 'none', transform: 'translateY(-3px)', fill: theme.palette.text.primary}} fontSize={'small'}/>
+};
+
+const NavButton = ({verticalSplit, onChange, Icon, label}) => {
+    const {palette} = useTheme();
+
+    return <Button
+        style={{
+            cursor: 'pointer', flexShrink: 0, padding: 6, minWidth: 'auto',
+            margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0',
+            display: 'flex', border: '1px solid ' + palette.text.primary,
+        }}
+        onClick={onChange} onMouseUp={unFocus}
+        aria-label={label}
+    >
+        <span style={{margin: 'auto'}}>
+            <Icon
+                titleAccess={label}
+                style={{display: 'block', fill: palette.text.primary,}}
+                fontSize={'small'}
+            />
+        </span>
+    </Button>
+};
+
+const EditorsNavWrapper = ({verticalSplit, children}) => {
+    const {palette} = useTheme();
+
+    return <div
+        style={{
+            marginTop: verticalSplit ? 'auto' : 0, marginLeft: verticalSplit ? 12 : 0, padding: verticalSplit ? 0 : '6px 0',
+            display: 'flex', order: 2, position: 'relative',
+            boxShadow: (palette.type === 'light' ? palette.grey[500] : palette.grey[600]) + ' 1px -1px 3px',
+            flexWrap: verticalSplit ? 'no-wrap' : 'wrap',
+        }}
+    >
+        {children}
+    </div>
+};
+
 const EditorsNav = ({
                         verticalSplit, changeSplit,
                         setTabSize, tabSize,
@@ -122,17 +171,11 @@ const EditorsNav = ({
         }
     }, [setJsonEditHeight]);
 
-    return <div
-        style={{
-            marginTop: verticalSplit ? 'auto' : 0, marginLeft: verticalSplit ? 12 : 0, display: 'flex', order: 2,
-            borderTop: verticalSplit ? 0 : '1px solid lightgrey', position: 'relative',
-            flexWrap: verticalSplit ? 'no-wrap' : 'wrap',
-        }}
-    >
+    return <EditorsNavWrapper verticalSplit={verticalSplit}>
         {verticalSplit ? null : <button
             style={{
                 height: '1rem', overflow: 'hidden', border: 0, position: 'absolute', cursor: 'pointer',
-                left: '50%', transform: 'translate(-50%, -8px)', display: 'flex', margin: 0, padding: '1px 4px 1px 4px',
+                left: '50%', transform: 'translate(-50%, -14px)', display: 'flex', margin: 0, padding: '1px 4px 1px 4px',
             }}
             onMouseDown={(e) => {
                 let target = e.target;
@@ -168,7 +211,7 @@ const EditorsNav = ({
             }}
             onClick={() => undefined}
             title={'Drag to change Height'}
-        ><DragHandle style={{pointerEvents: 'none', transform: 'translateY(-3px)'}} fontSize={'small'}/></button>}
+        ><DragHandleStyled/></button>}
 
         {verticalSplit ? null : <div style={{marginRight: 'auto', display: 'flex'}}>
             <SchemaChanger schemas={schemas} style={{margin: 'auto 4px'}} activeSchema={activeSchema}
@@ -176,7 +219,6 @@ const EditorsNav = ({
         </div>}
 
         <div style={{display: 'flex', flexDirection: verticalSplit ? 'column' : 'row', paddingLeft: 4}}>
-            {/*<div style={{display: 'flex', flexDirection: verticalSplit ? 'column-reverse' : 'row', paddingLeft: 4}}>*/}
             <IconInput
                 title={'Font Size'} value={fontSize} onChange={setFontSize}
                 verticalSplit={verticalSplit} min={6} max={30}
@@ -188,51 +230,28 @@ const EditorsNav = ({
                 Icon={SpaceBar} opacity={0.5} scale={0.9}
             />
 
-            <button
-                style={{cursor: 'pointer', margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0', flexShrink: 0, padding: 6, display: 'flex', border: '1px solid lightgrey'}}
-                onClick={() => changeSchema(activeSchema)} onMouseUp={unFocus}
-                aria-label={'reset data and schema'}
-            ><span style={{margin: 'auto'}}>
-            <RestorePage
-                titleAccess={'reset data and schema'}
-                style={{display: 'block'}}
-                fontSize={'small'}
+            <NavButton
+                label={'reset data and schema'}
+                Icon={RestorePage}
+                onChange={() => changeSchema(activeSchema)}
+                verticalSplit={verticalSplit}
             />
-        </span></button>
 
-            <button
-                style={{cursor: 'pointer', margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0', flexShrink: 0, padding: 6, display: 'flex', border: '1px solid lightgrey'}}
-                onClick={() => toggleRichIde()}
-                aria-label={'Switch to ' + (richIde ? 'text' : 'web ide')}
-            ><span style={{margin: 'auto'}}>
-            {richIde ? <Code
-                titleAccess={'Switch to ' + (richIde ? 'text' : 'web ide')}
-                style={{display: 'block'}}
-                fontSize={'small'}
-            /> : <FormatShapes
-                titleAccess={'Switch to ' + (richIde ? 'text' : 'web ide')}
-                style={{display: 'block'}}
-                fontSize={'small'}
-            />}
-        </span></button>
+            <NavButton
+                label={'Switch to ' + (richIde ? 'text' : 'web ide')}
+                Icon={richIde ? Code : FormatShapes}
+                onChange={toggleRichIde}
+                verticalSplit={verticalSplit}
+            />
 
-            <button
-                style={{cursor: 'pointer', margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0', flexShrink: 0, padding: 6, display: 'flex', border: '1px solid lightgrey'}}
-                onClick={changeSplit} onMouseUp={unFocus}
-                aria-label={'Switch to ' + (verticalSplit ? 'horizontal' : 'vertical') + ' split'}
-            ><span style={{margin: 'auto'}}>
-            {verticalSplit ? <HorizontalSplit
-                titleAccess={'Switch to ' + (verticalSplit ? 'horizontal' : 'vertical') + ' split'}
-                style={{display: 'block'}}
-                fontSize={'small'}
-            /> : <VerticalSplit
-                titleAccess={'Switch to ' + (verticalSplit ? 'horizontal' : 'vertical') + ' split'}
-                style={{transform: 'rotate(180deg)', display: 'block'}}
-                fontSize={'small'}
-            />}
-        </span></button>
+            <NavButton
+                label={'Switch to ' + (verticalSplit ? 'horizontal' : 'vertical') + ' split'}
+                Icon={verticalSplit ? HorizontalSplit : VerticalSplit}
+                onChange={changeSplit}
+                verticalSplit={verticalSplit}
+            />
         </div>
-    </div>
+    </EditorsNavWrapper>
 };
 
 const SchemaJSONEditor = ({schema, setJsonError, setSchema, tabSize, fontSize, richIde, renderChange}) => {
@@ -293,7 +312,7 @@ const SchemaChanger = ({activeSchema, changeSchema, style, schemas, toggleInfoBo
                 }
             }}
         ><span style={{margin: 'auto 0'}}>
-            {showInfo ? <SpeakerNotesOff fontSize={'small'}/> : <SpeakerNotes fontSize={'small'}/>}
+            {showInfo ? <SpeakerNotesOff style={{fill: palette.text.primary}} fontSize={'small'}/> : <SpeakerNotes style={{fill: palette.text.primary}} fontSize={'small'}/>}
         </span></button> : null}
     </Typography>
 };
@@ -536,10 +555,6 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
 
                         <InvalidLabel invalid={isInvalid(validity)} setShowValidity={setShowValidity} showValidity={showValidity}/>
                     </Paper>}
-
-                <Paper style={{margin: 12, padding: 24}}>
-                    <Nav/>
-                </Paper>
 
                 <div style={{height: 24, width: 1, flexShrink: 0}}/>
             </main>

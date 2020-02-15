@@ -1,7 +1,6 @@
 import React from "react";
-import {Container, Paper, Typography} from "@material-ui/core";
+import {Container,} from "@material-ui/core";
 import LiveEditor from '../Schema/LiveEditor'
-import {Link} from "../Link";
 import {dataMain, dataUser, schemaMain, schemaUser} from "../../schemas/demoMain";
 import {dataStepper, schemaStepper} from "../../schemas/demoStepper";
 import {
@@ -10,9 +9,6 @@ import {
 } from "../../schemas/demoCombining";
 import {dataConditional, dataConditionalAllOf, schemaConditional, schemaConditionalAllOf} from "../../schemas/demoConditional";
 import {dataDependencies, dataDependenciesBooleans, schemaDependencies, schemaDependenciesBooleans} from "../../schemas/demoDependencies";
-import {PageTitle} from "../Layout/PageContent";
-import Nav from "../Nav";
-import NavProject from "../NavProject";
 import {Layout} from "../Layout/Layout";
 
 const schemas = [

@@ -89,7 +89,7 @@ const schemaMain = createOrderedMap({
             type: "string",
             widget: "Text",
             view: {
-                sizeMd: 6,
+                sizeMd: 12,
             }
         },
         usaPhone: {
@@ -97,13 +97,13 @@ const schemaMain = createOrderedMap({
             // only valid for: (888)555-1212 or 555-1212
             pattern: "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
             view: {
-                sizeMd: 3
+                sizeMd: 6
             }
         },
         style: {
             type: "object",
             view: {
-                sizeMd: 3
+                sizeMd: 6
             },
             properties: {
                 center_items: {
