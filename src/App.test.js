@@ -4,6 +4,6 @@ import App from './App';
 
 test('renders header', () => {
     const {getByText} = render(<App/>);
-    const headerElement = getByText(/Material-UI Example/i);
+    const headerElement = getByText(/Documentation/i);
     expect(headerElement).toBeInTheDocument();
 });

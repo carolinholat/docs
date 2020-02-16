@@ -64,7 +64,9 @@ const Layout = ({children, title}) => {
 
     const loc = history.location.pathname;
     React.useEffect(() => {
-        ref.current.scrollTo(0, 0)
+        if(ref.current && ref.current.scrollTo) {
+            ref.current.scrollTo(0, 0)
+        }
     }, [loc]);
 
     return <React.Fragment>
