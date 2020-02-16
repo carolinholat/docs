@@ -13,6 +13,7 @@ import {I18nProvider} from "./lib/I18n";
 import AppTheme from "./lib/AppTheme";
 import {I18nRedir} from "./lib/I18nRedir";
 import {Layout} from "./component/Layout/Layout";
+import {DrawerProvider} from "./component/Layout/Drawer";
 
 const LoadingPage = ({title}) => <Layout>
     <Container maxWidth={'md'} fixed style={{display: 'flex', flexDirection: 'column', flexGrow: 2,}}>
@@ -57,14 +58,17 @@ function App() {
                 <Switch>
                     <Route exact path={'/'} component={I18nRedir}/>
                     <Route path={'/examples'} exact render={() => <I18nRedir to={'examples'}/>}/>
+                    <Route path={'/docs'} exact render={() => <I18nRedir to={'docs'}/>}/>
                 </Switch>
             </React.Suspense>
 
-            <AppTheme>
-                <React.Suspense fallback={null}>
-                    <Route path="/:lng" component={PageRoutes}/>
-                </React.Suspense>
-            </AppTheme>
+            <DrawerProvider>
+                <AppTheme>
+                    <React.Suspense fallback={null}>
+                        <Route path="/:lng" component={PageRoutes}/>
+                    </React.Suspense>
+                </AppTheme>
+            </DrawerProvider>
         </I18nProvider>
     </Router>
 }

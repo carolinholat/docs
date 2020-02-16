@@ -1,6 +1,7 @@
 import React from 'react';
+import clsx from 'clsx';
 import {
-    Link as RouterLink
+    NavLink as RouterLink
 } from "react-router-dom";
 import MuiLink from '@material-ui/core/Link';
 import List from '@material-ui/core/List';
@@ -15,20 +16,31 @@ const useListItemStyles = makeStyles(theme => ({
     },
 }));
 
+const useListLinkStyles = makeStyles(theme => ({
+    root: {
+        '&.active': {
+            background: theme.palette.divider
+        }
+    },
+}));
+
 const ListItemIcon = props => {
     const classes = useListItemStyles();
     return <ListItemIc classes={classes} {...props}/>;
 };
 
-function ListItemLink({icon, primary, to, style, classes = {}, children}) {
-    const renderLink = React.useMemo(
-        () => React.forwardRef((itemProps, ref) =>
-            <RouterLink to={to} ref={ref} {...itemProps} />
-        ),
-        [to],
-    );
+function ListItemLink({icon, primary, to, dense, style, onClick, classes = {}, showActive, children}) {
+    const classesLink = useListLinkStyles();
 
-    return <ListItem button component={renderLink} style={style} className={classes.listItem ? classes.listItem : undefined}>
+    const renderLink = React.useMemo(() => React.forwardRef((itemProps, ref) =>
+        <RouterLink to={to} exact ref={ref} {...itemProps} />
+    ), [to],);
+
+    return <ListItem
+        button component={renderLink} style={style} dense={dense}
+        onClick={onClick}
+        className={clsx(classes.listItem ? classes.listItem : undefined, showActive ? classesLink.root : undefined)}
+    >
         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
         <ListItemText primary={primary} className={classes.listItemText ? classes.listItemText : undefined}/>
         {children}

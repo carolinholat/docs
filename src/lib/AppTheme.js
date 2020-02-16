@@ -3,6 +3,33 @@ import PropTypes from 'prop-types';
 import {createMuiTheme} from "@material-ui/core";
 import {ThemeProvider} from "./Theme";
 
+const universal = {
+    typography: {
+        fontSize: 14,
+        h1: {
+            fontSize: '3.2rem'
+        },
+        h2: {
+            fontSize: '2.5rem'
+        },
+        h3: {
+            fontSize: '2.25rem'
+        },
+        h4: {
+            fontSize: '2rem'
+        },
+        h5: {
+            fontSize: '1.75rem'
+        },
+        h6: {
+            fontSize: '1.25rem'
+        }
+    },
+    shape: {
+        borderRadius: 0,
+    }
+};
+
 const themeDark = createMuiTheme({
     palette: {
         type: "dark",
@@ -27,18 +54,7 @@ const themeDark = createMuiTheme({
             hoverOpacity: 0.2,
         },
     },
-    typography: {
-        fontSize: 14,
-        h1: {
-            fontSize: '3rem'
-        },
-        h2: {
-            fontSize: '2.75rem'
-        }
-    },
-    shape: {
-        borderRadius: 0,
-    }
+    ...universal,
 });
 
 const themeLight = createMuiTheme({
@@ -65,18 +81,7 @@ const themeLight = createMuiTheme({
             hoverOpacity: 0.2,
         },
     },
-    typography: {
-        fontSize: 14,
-        h1: {
-            fontSize: '3rem'
-        },
-        h2: {
-            fontSize: '2.75rem'
-        }
-    },
-    shape: {
-        borderRadius: 0,
-    }
+    ...universal,
 });
 
 const themes = {

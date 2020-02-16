@@ -7,16 +7,27 @@ import "ace-builds/src-noconflict/ext-static_highlight";
 import "ace-builds/src-noconflict/ext-language_tools";
 import "ace-builds/src-noconflict/ext-searchbox";
 import "ace-builds/src-noconflict/ext-statusbar";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/theme-chrome";
+import "ace-builds/src-noconflict/theme-clouds_midnight";
 import "ace-builds/src-noconflict/theme-cobalt";
+import "ace-builds/src-noconflict/theme-gruvbox";
+import "ace-builds/src-noconflict/theme-monokai";
+import {useTheme} from "@material-ui/core";
 
 ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/");
 ace.config.setModuleUrl('ace/mode/javascript_worker', "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/worker-javascript.js");
+
+const themes = ['clouds_midnight', 'cobalt', 'gruvbox', 'monokai',];
+
+const themesLight = ['chrome', 'github'];
 
 const RichCodeEditor = ({
                             value, onChange, name, readOnly,
                             tabSize = 2, fontSize = 13, theme = 'cobalt', mode = 'json', raw = false, renderChange = 0,
                         }) => {
     const [editor, setEditor] = React.useState({});
+    const {palette} = useTheme();
 
     React.useEffect(() => {
         if(editor && editor.resize && editor.renderer) {
@@ -31,14 +42,16 @@ const RichCodeEditor = ({
             style={{
                 fontSize, fontFamily: 'Consolas, "Lucida Console", Courier, monospace', lineHeight: '1.27em',
                 width: '100%', height: 'auto', flexGrow: 2,
-                border: '1px solid lightgrey', display: 'block', margin: 0, boxSizing: 'border-box'
+                display: 'block', margin: 0, padding: 3, boxSizing: 'border-box',
+                background: palette.background.paper, color: palette.text.primary,
+                border: '1px solid ' + palette.divider,
             }}
         />;
     }
 
     return <AceEditor
         mode={mode}
-        theme={theme}
+        theme={palette.type === 'light' ? themesLight[0] : theme}
         value={value}
         onChange={onChange}
         name={name}
@@ -71,4 +84,4 @@ const RichCodeEditor = ({
     />
 };
 
-export {RichCodeEditor}
+export {RichCodeEditor, themes}

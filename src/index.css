@@ -7,9 +7,15 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-spaces;
+    line-height: 1.75;
+    padding: 2px 2px;
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-    background: #ddecec;
     padding: 2px 2px
 }
 
@@ -21,4 +27,11 @@ input[type="number"].no-spin::-webkit-inner-spin-button {
 
 input[type="number"].no-spin {
     -moz-appearance: textfield;
+}
+
+h1:first-child,
+h2:first-child,
+h3:first-child,
+h4:first-child {
+    margin-top: 0 !important;
 }

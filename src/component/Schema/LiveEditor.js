@@ -1,13 +1,19 @@
 import React from 'react';
 import {useRouteMatch, useHistory} from 'react-router-dom'
-import {Box, Button, Paper, Typography, useTheme} from "@material-ui/core";
-import {DragHandle, SpeakerNotes, SpeakerNotesOff, Add, Remove, FormatSize, FormatShapes, Code, SpaceBar, RestorePage, HorizontalSplit, VerticalSplit} from "@material-ui/icons";
+import {FormControl, Select, MenuItem, Box, Button, Paper, Typography, useTheme} from "@material-ui/core";
+import {
+    DragHandle, Opacity,
+    SpeakerNotes, SpeakerNotesOff, Add, Remove,
+    Visibility, VisibilityOff,
+    FormatSize, FormatShapes, Code, SpaceBar, RestorePage, HorizontalSplit, VerticalSplit
+} from "@material-ui/icons";
 import {isInvalid, createMap, createOrderedMap, SchemaEditorProvider, SchemaRootRenderer, useSchemaData} from "@ui-schema/ui-schema";
 import {widgets} from "@ui-schema/ds-material";
-import {RichCodeEditor} from "../RichCodeEditor";
+import {RichCodeEditor, themes} from "../RichCodeEditor";
 import {Markdown} from "../Markdown";
 import {PageNotFound} from "../Page/PageNotFound";
 import {useTranslation} from "react-i18next";
+import {schemas} from "../../schemas/_list";
 
 const IconInput = ({
                        verticalSplit, title,
@@ -21,7 +27,7 @@ const IconInput = ({
     return <div
         style={{
             margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0',
-            border: '1px solid ' + palette.text.primary,
+            border: '1px solid ' + palette.divider,
             zIndex: 2,
             flexShrink: 0,
             padding: 6,
@@ -101,16 +107,16 @@ const DragHandleStyled = () => {
     return <DragHandle style={{pointerEvents: 'none', transform: 'translateY(-3px)', fill: theme.palette.text.primary}} fontSize={'small'}/>
 };
 
-const NavButton = ({verticalSplit, onChange, Icon, label}) => {
+const NavButton = ({verticalSplit, onClick, Icon, label}) => {
     const {palette} = useTheme();
 
     return <Button
         style={{
             cursor: 'pointer', flexShrink: 0, padding: 6, minWidth: 'auto',
             margin: verticalSplit ? '0 0 6px 0' : '3px 6px 3px 0',
-            display: 'flex', border: '1px solid ' + palette.text.primary,
+            display: 'flex', border: '1px solid ' + palette.divider,
         }}
-        onClick={onChange} onMouseUp={unFocus}
+        onClick={onClick} onMouseUp={unFocus}
         aria-label={label}
     >
         <span style={{margin: 'auto'}}>
@@ -130,12 +136,26 @@ const EditorsNavWrapper = ({verticalSplit, children}) => {
         style={{
             marginTop: verticalSplit ? 'auto' : 0, marginLeft: verticalSplit ? 12 : 0, padding: verticalSplit ? 0 : '6px 0',
             display: 'flex', order: 2, position: 'relative',
-            boxShadow: (palette.type === 'light' ? palette.grey[500] : palette.grey[600]) + ' 1px -1px 3px',
+            borderTop: '1px solid ' + palette.divider,
             flexWrap: verticalSplit ? 'no-wrap' : 'wrap',
         }}
     >
         {children}
     </div>
+};
+
+const IdeThemeChange = ({editorTheme, verticalSplit, setEditorTheme}) => {
+    const {palette} = useTheme();
+
+    return palette.type === 'dark' ? <NavButton
+        onClick={() => {
+            let themePos = themes.indexOf(editorTheme);
+            setEditorTheme(themePos >= themes.length - 1 ? themes[0] : themes[themePos + 1])
+        }}
+        Icon={Opacity}
+        verticalSplit={verticalSplit}
+        label={'Toggle Theme'}
+    /> : null;
 };
 
 const EditorsNav = ({
@@ -147,6 +167,7 @@ const EditorsNav = ({
                         schemas,
                         showInfo, toggleInfoBox, hasInfo,
                         setJsonEditHeight, setRenderChange,
+                        setEditorTheme, editorTheme,
                     }) => {
     const [upDownHandler, setUpDownHandler] = React.useState(false);
 
@@ -174,7 +195,7 @@ const EditorsNav = ({
     return <EditorsNavWrapper verticalSplit={verticalSplit}>
         {verticalSplit ? null : <button
             style={{
-                height: '1rem', overflow: 'hidden', border: 0, position: 'absolute', cursor: 'pointer',
+                height: '1rem', overflow: 'hidden', border: 0, position: 'absolute', cursor: 'grab',
                 left: '50%', transform: 'translate(-50%, -14px)', display: 'flex', margin: 0, padding: '1px 4px 1px 4px',
             }}
             onMouseDown={(e) => {
@@ -213,12 +234,29 @@ const EditorsNav = ({
             title={'Drag to change Height'}
         ><DragHandleStyled/></button>}
 
-        {verticalSplit ? null : <div style={{marginRight: 'auto', display: 'flex'}}>
+        {verticalSplit ? null : <div style={{marginRight: 'auto', display: 'flex', minWidth: '200px'}}>
             <SchemaChanger schemas={schemas} style={{margin: 'auto 4px'}} activeSchema={activeSchema}
+                           verticalSplit={verticalSplit}
                            changeSchema={changeSchema} toggleInfoBox={toggleInfoBox} showInfo={showInfo} hasInfo={hasInfo} setRenderChange={setRenderChange}/>
         </div>}
 
         <div style={{display: 'flex', flexDirection: verticalSplit ? 'column' : 'row', paddingLeft: 4}}>
+            {hasInfo ? <NavButton
+                onClick={() => {
+                    toggleInfoBox(p => !p);
+                    if(setRenderChange) {
+                        setRenderChange(p => p + 1);
+                    }
+                }}
+                Icon={({style = {}, ...p}) => showInfo ?
+                    <SpeakerNotesOff {...p} style={{fill: 'currentColor', ...style}}/> :
+                    <SpeakerNotes {...p} style={{fill: 'currentColor', ...style}}/>}
+                verticalSplit={verticalSplit}
+                label={'Toggle Example Description'}
+            /> : null}
+
+            <IdeThemeChange editorTheme={editorTheme} setEditorTheme={setEditorTheme} verticalSplit={verticalSplit}/>
+
             <IconInput
                 title={'Font Size'} value={fontSize} onChange={setFontSize}
                 verticalSplit={verticalSplit} min={6} max={30}
@@ -233,32 +271,33 @@ const EditorsNav = ({
             <NavButton
                 label={'reset data and schema'}
                 Icon={RestorePage}
-                onChange={() => changeSchema(activeSchema)}
+                onClick={() => changeSchema(activeSchema)}
                 verticalSplit={verticalSplit}
             />
 
             <NavButton
                 label={'Switch to ' + (richIde ? 'text' : 'web ide')}
                 Icon={richIde ? Code : FormatShapes}
-                onChange={toggleRichIde}
+                onClick={toggleRichIde}
                 verticalSplit={verticalSplit}
             />
 
             <NavButton
                 label={'Switch to ' + (verticalSplit ? 'horizontal' : 'vertical') + ' split'}
                 Icon={verticalSplit ? HorizontalSplit : VerticalSplit}
-                onChange={changeSplit}
+                onClick={changeSplit}
                 verticalSplit={verticalSplit}
             />
         </div>
     </EditorsNavWrapper>
 };
 
-const SchemaJSONEditor = ({schema, setJsonError, setSchema, tabSize, fontSize, richIde, renderChange}) => {
+const SchemaJSONEditor = ({schema, setJsonError, setSchema, tabSize, fontSize, richIde, renderChange, theme}) => {
     return <RichCodeEditor
         tabSize={tabSize}
         fontSize={fontSize}
         raw={!richIde}
+        theme={theme}
         renderChange={renderChange}
         value={typeof schema === 'string' ? schema : JSON.stringify(schema.toJS(), null, tabSize)}
         onChange={(newValue) => {
@@ -274,12 +313,13 @@ const SchemaJSONEditor = ({schema, setJsonError, setSchema, tabSize, fontSize, r
     />
 };
 
-const SchemaDataDebug = ({tabSize, fontSize, richIde, renderChange}) => {
+const SchemaDataDebug = ({tabSize, fontSize, richIde, renderChange, theme}) => {
     const {store} = useSchemaData();
 
     return <RichCodeEditor
         value={JSON.stringify(store.toJS(), null, tabSize)}
         name={'live-editor-debug'}
+        theme={theme}
         tabSize={tabSize}
         fontSize={fontSize}
         renderChange={renderChange}
@@ -288,33 +328,18 @@ const SchemaDataDebug = ({tabSize, fontSize, richIde, renderChange}) => {
     />
 };
 
-const SchemaChanger = ({activeSchema, changeSchema, style, schemas, toggleInfoBox, showInfo, hasInfo, setRenderChange}) => {
-    const {palette} = useTheme();
+const SchemaChanger = ({activeSchema, changeSchema, schemas, verticalSplit}) => {
 
-    return <Typography component={'label'} variant={'overline'} style={{...style, padding: '5px 0', lineHeight: '2.4', display: 'flex', flexWrap: 'wrap'}}>
-        <span className={'hide-sm'} style={{padding: '0 4px', background: palette.text.primary, color: palette.background.default, flexShrink: 0}}>Select Example</span>
-        <Typography
-            component={'select'} variant={'overline'}
-            value={activeSchema} onChange={e => changeSchema(e.target.value * 1)}
-            style={{border: '1px solid lightgrey', padding: 3, fontWeight: 'bold', letterSpacing: '0.11em', lineHeight: '1.3'}}
-        >
+    return <FormControl fullWidth style={{padding: verticalSplit ? '20px 0 20px 3px' : '0 0 0 6px',}}>
+        <Select value={activeSchema} onChange={e => changeSchema(e.target.value * 1)} displayEmpty>
+            <MenuItem value="" disabled>
+                Examples
+            </MenuItem>
             {schemas.map((schema, i) => (
-                <option key={i} value={i}>{schema[0]}</option>
+                <MenuItem key={i} value={i}>{schema[0]}</MenuItem>
             ))}
-        </Typography>
-
-        {hasInfo ? <button
-            style={{border: 0, display: 'flex'}}
-            onClick={() => {
-                toggleInfoBox(p => !p);
-                if(setRenderChange) {
-                    setRenderChange(p => p + 1);
-                }
-            }}
-        ><span style={{margin: 'auto 0'}}>
-            {showInfo ? <SpeakerNotesOff style={{fill: palette.text.primary}} fontSize={'small'}/> : <SpeakerNotes style={{fill: palette.text.primary}} fontSize={'small'}/>}
-        </span></button> : null}
-    </Typography>
+        </Select>
+    </FormControl>;
 };
 
 const initialLocalBoolean = (key, def) => {
@@ -348,7 +373,7 @@ const searchActiveSchema = (schemas, schema) => {
     return found;
 };
 
-const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) => {
+const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema}) => {
     const history = useHistory();
     const {i18n} = useTranslation();
 
@@ -359,9 +384,11 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
     const [jsonError, setJsonError] = React.useState(false);
     const [tabSize, setTabSize] = React.useState(2);
     const [fontSize, setFontSize] = React.useState(13);
-    const [showInfo, setInfoBox] = React.useState(false);
+    const [showInfo, setInfoBox] = React.useState(true);
+    const [showData, setDataBox] = React.useState(true);
     const [jsonEditHeight, setJsonEditHeight] = React.useState(350);
     const [renderChange, setRenderChange] = React.useState(0);// Ace Editor Re-Size Re-Calc
+    const [editorTheme, setEditorTheme] = React.useState('clouds_midnight');
     const infoBox = React.useRef();// to scroll to top of info text when toggling/switching sides
 
     // default schema state - begin
@@ -373,13 +400,23 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
 
     const toggleInfoBox = React.useCallback((setter) => {
         setInfoBox(setter);
-    }, [setInfoBox]);
+        if(setRenderChange) {
+            setRenderChange(p => p + 1);
+        }
+    }, [setInfoBox, setRenderChange]);
+
+    const toggleDataBox = React.useCallback((setter) => {
+        setDataBox(setter);
+        if(setRenderChange) {
+            setRenderChange(p => p + 1);
+        }
+    }, [setDataBox, setRenderChange]);
 
     const changeSplit = React.useCallback(() => {
         // toggle verticalSplit and change selected in localStorage
         toggleLocalBoolean(setVerticalSplit, 'live-editor-vertical');
         setRenderChange(p => p + 1);
-    }, [setVerticalSplit]);
+    }, [setVerticalSplit, setRenderChange]);
 
     const toggleRichIde = React.useCallback(() => {
         // toggle richIde and change selected in localStorage
@@ -394,7 +431,7 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
         setRenderChange(p => p + 1);
         history.push('/' + i18n.language + '/examples/' + (schemas[i][0].split(' ').join('-')));
         // `setValidity` is not needed, as it cleans itself on dismounts and fills itself again on new mounts
-    }, [setActiveSchema, i18n, setShowValidity, setSchema, setData, schemas, history]);
+    }, [setActiveSchema, i18n, setShowValidity, setSchema, setData, history]);
 
     React.useEffect(() => {
         if(infoBox.current) {
@@ -415,7 +452,7 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
                 changeSchema(foundSchema)
             }
         }
-    }, [matchedSchema, changeSchema, activeSchema, schemas]);
+    }, [matchedSchema, changeSchema, activeSchema]);
 
     return <SchemaEditorProvider
         schema={schema}
@@ -444,40 +481,34 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
                     {verticalSplit ? <SchemaChanger
                         toggleInfoBox={toggleInfoBox} showInfo={showInfo} hasInfo={!!schemas[activeSchema][3]}
                         schemas={schemas} style={{marginLeft: 4}}
-                        setRenderChange={setRenderChange}
+                        setRenderChange={setRenderChange} verticalSplit={verticalSplit}
                         activeSchema={activeSchema} changeSchema={changeSchema}/> : null}
 
-                    {(verticalSplit || (!verticalSplit && showInfo)) && schemas[activeSchema][3] ?
+                    {schemas[activeSchema][3] ?
                         <div style={{
                             height: verticalSplit ? 'auto' : 'auto', display: 'flex', flexDirection: 'column', flexShrink: 0,
                             width: verticalSplit ? 'auto' : schemas[activeSchema][3] ? showInfo ? '33%' : 'auto' : showInfo ? '50%' : 'auto',
-                            maxHeight: verticalSplit ? '35%' : 'none', paddingLeft: verticalSplit ? 0 : 6
+                            maxHeight: verticalSplit ? '35%' : 'none', paddingLeft: verticalSplit ? 0 : 6, marginRight: !verticalSplit && showInfo ? 12 : 0
                         }}>
-                            <Typography component={'p'} variant={'overline'} style={{marginLeft: 4, display: 'flex', flexShrink: 0}}>
-                                Info:
-                                <button
-                                    style={{border: 0, margin: 'auto 0 auto 4px', display: 'flex-inline'}}
-                                    onClick={() => {
-                                        toggleInfoBox(p => !p);
-                                        if(setRenderChange) {
-                                            setRenderChange(p => p + 1);
-                                        }
-                                    }}
-                                ><span style={{margin: '0'}}>
-                                    {showInfo ? <SpeakerNotesOff fontSize={'small'}/> : <SpeakerNotes fontSize={'small'}/>}
-                                </span></button>
-                            </Typography>
+                            <Button variant={'outlined'} size={'small'}
+                                    style={{marginLeft: 4, display: 'flex', lineHeight: 2.66, flexShrink: 0, minWidth: 0, color: 'inherit', border: 0, padding: 0, cursor: 'pointer'}}
+                                    onClick={() => toggleInfoBox(o => !o)}>
+                                {showInfo || verticalSplit ? 'Info:' : 'I·'}
 
-                            {showInfo ? <Box ml={2} mr={verticalSplit ? 0 : 1.5} style={{overflow: 'auto', padding: '0 6px 0 0'}} ref={infoBox}>
+                                {showInfo ?
+                                    <SpeakerNotesOff fontSize={'small'} style={{margin: 'auto ' + (verticalSplit ? 0 : 9) + 'px auto auto'}}/> :
+                                    <SpeakerNotes fontSize={'small'} style={{margin: 'auto ' + (verticalSplit ? 0 : 9) + 'px auto auto'}}/>}
+                            </Button>
+
+                            {showInfo ? <Paper style={{overflow: 'auto', padding: '0 6px 0 0'}} ref={infoBox}><Box mt={1} mb={1} ml={2} mr={verticalSplit ? 0 : 1.5}>
                                 <div style={{overflow: 'visible', margin: 0,}}>
                                     <Markdown source={schemas[activeSchema][3]}/>
                                 </div>
-                            </Box> : null}
+                            </Box></Paper> : null}
                         </div> : null}
 
                     <div style={{
-                        height: 'auto', flexGrow: 2, flexShrink: 0, display: 'flex', flexDirection: 'column',
-                        width: verticalSplit ? 'auto' : showInfo && schemas[activeSchema][3] ? '33%' : '50%',
+                        height: 'auto', flexGrow: 2, flexShrink: 0, display: 'flex', flexDirection: 'column', width: 'auto',
                     }}>
                         <Typography component={'p'} variant={'overline'} style={{marginLeft: 4}}>
                             Schema:
@@ -490,30 +521,27 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
                             fontSize={fontSize}
                             richIde={richIde}
                             renderChange={renderChange}
+                            theme={editorTheme}
                         />
                     </div>
 
                     <div style={{
-                        height: verticalSplit ? showInfo ? 'auto' : '30%' : 'auto', display: 'flex', flexDirection: 'column', flexShrink: 0,
-                        width: verticalSplit ? 'auto' : showInfo && schemas[activeSchema][3] ? '33%' : showInfo ? 'auto' : '50%',
+                        height: verticalSplit ? showData ? '30%' : 'auto' : 'auto', display: 'flex', flexDirection: 'column', flexShrink: 1,
+                        width: verticalSplit ? 'auto' : showData ? '33%' : 'auto',
                         paddingLeft: verticalSplit ? 0 : 12, boxSizing: 'border-box',
                     }}>
-                        <Typography component={'p'} variant={'overline'} style={{marginLeft: 4, display: 'flex'}}>
-                            Data:
-                            {showInfo && verticalSplit && !!schemas[activeSchema][3] ? <button
-                                style={{border: 0, display: 'flex'}}
-                                onClick={() => {
-                                    toggleInfoBox(p => !p);
-                                    if(setRenderChange) {
-                                        setRenderChange(p => p + 1);
-                                    }
-                                }}
-                            ><span style={{margin: 'auto 0'}}>
-                                {showInfo ? <SpeakerNotesOff fontSize={'small'}/> : <SpeakerNotes fontSize={'small'}/>}
-                            </span></button> : null}
-                        </Typography>
-                        {showInfo && schemas[activeSchema][3] && verticalSplit ? null :
-                            <SchemaDataDebug tabSize={tabSize} fontSize={fontSize} richIde={richIde} renderChange={renderChange}/>}
+                        <Button variant={'outlined'} size={'small'}
+                                style={{marginLeft: 4, display: 'flex', lineHeight: 2.66, minWidth: 0, flexShrink: 0, color: 'inherit', border: 0, padding: 0, cursor: 'pointer'}}
+                                onClick={() => toggleDataBox(o => !o)}>
+                            {showData || verticalSplit ? 'Data:' : 'D·'}
+
+                            {showData ?
+                                <VisibilityOff fontSize={'small'} style={{margin: 'auto 0 auto auto'}}/> :
+                                <Visibility fontSize={'small'} style={{margin: 'auto 0 auto auto'}}/>}
+                        </Button>
+                        {schemas[activeSchema][3] && showData ?
+                            <SchemaDataDebug tabSize={tabSize} fontSize={fontSize} richIde={richIde} renderChange={renderChange} theme={editorTheme}/> :
+                            null}
                     </div>
                 </div>
             </div>
@@ -537,6 +565,8 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
                 jsonEditHeight={jsonEditHeight}
                 setJsonEditHeight={setJsonEditHeight}
                 setRenderChange={setRenderChange}
+                setEditorTheme={setEditorTheme}
+                editorTheme={editorTheme}
             />
 
             <main className="App-main" style={{height: '100%', overflow: 'auto', maxWidth: 'none', margin: verticalSplit ? '0 auto' : 0, order: verticalSplit ? 3 : 1}}>
@@ -562,7 +592,7 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema, schemas}) 
     </SchemaEditorProvider>;
 };
 
-const Editor = ({schemas}) => {
+const Editor = () => {
     const match = useRouteMatch();
 
     // Custom State for Live-Editor
@@ -578,7 +608,7 @@ const Editor = ({schemas}) => {
         } else if(foundSchema === false && typeof match.params.schema === 'undefined') {
             setActiveSchema(0)
         }
-    }, [activeSchema, setActiveSchema, match, schemas]);
+    }, [activeSchema, setActiveSchema, match]);
 
     if(activeSchema === false) return <PageNotFound/>;
 
@@ -586,7 +616,6 @@ const Editor = ({schemas}) => {
         activeSchema={activeSchema}
         setActiveSchema={setActiveSchema}
         matchedSchema={match.params.schema}
-        schemas={schemas}
     />
 };
 
