@@ -91,6 +91,7 @@ const AppDrawer = () => {
     >
         <List>
             <ListItemLink to={'/' + i18n.language} primary={'Home'} dense showActive onClick={closeOnClick}/>
+            <ListItemLink to={'/' + i18n.language + '/examples'} primary={'Live Editor'} dense showActive onClick={closeOnClick}/>
             <CollapseDrawer toggle={'Documentation'} dense>
                 <List component="div" disablePadding>
                     {contentDocs.map(([id, label], i) =>
@@ -98,8 +99,7 @@ const AppDrawer = () => {
                     )}
                 </List>
             </CollapseDrawer>
-            <ListItemLink to={'/' + i18n.language + '/examples'} primary={'Live Editor'} dense showActive onClick={closeOnClick}/>
-            <CollapseDrawer toggle={'Examples'} dense>
+            <CollapseDrawer toggle={'Schema Examples'} dense>
                 <List component="div" disablePadding style={{overflow: 'auto'}}>
                     {schemas.map((schema, i) => (
                         <ListItemLink key={i} to={'/' + i18n.language + '/examples/' + (schemas[i][0].split(' ').join('-'))}
@@ -107,6 +107,14 @@ const AppDrawer = () => {
                     ))}
                 </List>
             </CollapseDrawer>
+            {/*<CollapseDrawer toggle={'React Examples'} dense>
+                <List component="div" disablePadding style={{overflow: 'auto'}}>
+                    {schemas.map((schema, i) => (
+                        <ListItemLink key={i} to={'/' + i18n.language + '/react-examples/' + (schemas[i][0].split(' ').join('-'))}
+                                      primary={schema[0]} style={{paddingLeft: 32}} dense showActive onClick={closeOnClick}/>
+                    ))}
+                </List>
+            </CollapseDrawer>*/}
         </List>
         <Divider/>
     </Drawer>

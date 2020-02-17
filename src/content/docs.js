@@ -1,6 +1,7 @@
 const contentDocs = [
     ['overview', 'Overview'],
     ['quick-start', 'Quick Start'],
+    ['philosophy', 'Philosophy'],
     ['schema', 'Schema'],
     ['design-systems', 'Design-Systems'],
     ['widgets', 'Widgets'],

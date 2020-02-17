@@ -29,6 +29,15 @@ input[type="number"].no-spin {
     -moz-appearance: textfield;
 }
 
+blockquote:before{
+    content: "“";
+    position: absolute;
+    font-size: 3rem;
+    line-height: 2rem;
+    opacity: 0.6;
+    left: 6px;
+}
+
 h1:first-child,
 h2:first-child,
 h3:first-child,

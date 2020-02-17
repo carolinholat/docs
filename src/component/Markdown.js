@@ -1,22 +1,47 @@
 import ReactMarkdown from "react-markdown";
-import {Link, Typography, useTheme} from "@material-ui/core";
-import {OpenInNew} from "@material-ui/icons";
+import {
+    TableContainer, Table, TableHead, TableBody, TableRow, TableCell,
+    Link, Typography, Button, useTheme, Paper
+} from "@material-ui/core";
+import {UnfoldLess, UnfoldMore, OpenInNew} from "@material-ui/icons";
 import {Link as InternalLink} from './Link'
 import React from "react";
 import {useTranslation} from "react-i18next";
+import {RichCodeEditor, supportedModes} from "./RichCodeEditor";
 
 const InlineCode = ({variant, ...p}) => {
     const {palette} = useTheme();
-    return <Typography component={'code'} variant={variant} style={{background: palette.divider}}>{p.children}</Typography>
+    return <Typography component={'code'} variant={variant} style={{background: palette.divider}} gutterBottom>{p.children}</Typography>
+};
+
+const languageMapping = {
+    js: 'javascript'
 };
 
 const Code = ({variant, ...p}) => {
     const {palette} = useTheme();
-    return <Typography component={'pre'} variant={variant} style={{background: palette.divider}} gutterBottom>
-        <Typography component={'code'} className={'code--' + p.language}>
-            {p.value}
-        </Typography>
-    </Typography>
+    const [showAll, setShowAll] = React.useState(0);// triple state/dual-type needed, 0 as default, true when open, false when closed
+    const [editor, setEditor] = React.useState(undefined);
+
+    const currentMode = languageMapping[p.language] ? languageMapping[p.language] : p.language;
+    const scrollBar = editor && editor.container ? editor.container.querySelector('.ace_scrollbar-v') : undefined;
+
+    return supportedModes.indexOf(currentMode) === -1 ?
+        <Typography component={'pre'} variant={variant} style={{background: palette.divider}} gutterBottom>
+            <Typography component={'code'} className={'code--' + p.language}>
+                {p.value}
+            </Typography>
+        </Typography> :
+        <div style={{position: 'relative'}}>
+            <RichCodeEditor value={p.value} readOnly mode={currentMode}
+                            fontSize={14} minLines={2} maxLines={showAll ? 3000 : 30}
+                            getEditor={setEditor}
+                            style={{margin: '24px 0', transition: 'height 0.4s linear 0s'}}/>
+            {typeof showAll === 'boolean' || (editor && editor.container && scrollBar && scrollBar.clientHeight && scrollBar.clientWidth) ?
+                <Button style={{position: 'absolute', bottom: 3, right: 20, minWidth: 'auto'}} onClick={() => setShowAll(p => !p)}>
+                    {showAll ? <UnfoldLess fontSize={'small'}/> : <UnfoldMore fontSize={'small'}/>}
+                </Button> : null}
+        </div>
 };
 
 const scrollParent = element => {
@@ -48,10 +73,29 @@ const InternalLocaleLink = (p) => {
     />
 };
 
+const StyledBlockquote = p => {
+    const theme = useTheme();
+    return <Paper elevation={3}>
+        <Typography
+            {...p} component={'blockquote'} variant={'body1'}
+            style={{margin: '12px 0 24px 0', padding: '8px 0 2px 30px', position: 'relative', borderLeft: '0 solid ' + theme.palette.divider}}/>
+    </Paper>
+};
+
+const copyToClipboard = str => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+};
+
 // see: https://github.com/rexxars/react-markdown#node-types
 const renderers = {
     root: React.Fragment,
     paragraph: p => <Typography {...p} component={'p'} variant={'body2'} gutterBottom/>,
+    blockquote: StyledBlockquote,
     inlineCode: p => <InlineCode variant={'body2'} {...p}/>,
     code: p => <Code variant={'body2'} {...p}/>,
     heading: ({level, ...p}) => <Typography {...p} component={'h' + (level + 1)} variant={'subtitle' + (level)} style={{textDecoration: 'underline', marginTop: 48 / level}} gutterBottom/>,
@@ -65,30 +109,22 @@ const renderers = {
         </Link>,
 };
 
-const copyToClipboard = str => {
-    const el = document.createElement('textarea');
-    el.value = str;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-};
-
 const renderersContent = {
     root: React.Fragment,
     paragraph: p => <Typography {...p} component={'p'} variant={'body1'} gutterBottom/>,
+    blockquote: StyledBlockquote,
     inlineCode: p => <InlineCode variant={'body1'} {...p}/>,
     code: p => <Code variant={'body1'} {...p}/>,
-    heading: ({level, ...p}) => <Typography
-        {...p} component={'h' + (level + 1)} variant={'h' + (level)}
-        onClick={() => copyToClipboard(window.location.protocol + '//' + window.location.host + window.location.pathname + '#' +
-            (p.children && p.children[0] && p.children[0].props && p.children[0].props.value ?
-                p.children[0].props.value.toLowerCase().replace(/\s/g, '-')
-                : ''))}
-        id={p.children && p.children[0] && p.children[0].props && p.children[0].props.value ?
+    heading: ({level, ...p}) => {
+        const id = p.children && p.children[0] && p.children[0].props && p.children[0].props.value ?
             p.children[0].props.value.toLowerCase().replace(/\s/g, '-')
-            : undefined}
-        gutterBottom style={{marginTop: 48 / level}}/>,
+            : undefined;
+        return <Typography
+            {...p} component={'h' + (level + 1)} variant={'h' + (level)}
+            onClick={() => id ? copyToClipboard(window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + id) : undefined}
+            id={id} gutterBottom style={{marginTop: 48 / level}}
+        />
+    },
     list: p => p.ordered ? <ol style={{margin: '10px'}}>{p.children}</ol> : <ul style={{margin: '10px 0'}}>{p.children}</ul>,
     listItem: p => <Typography component={'li'} variant={'body1'} style={{fontWeight: 'bold'}}><span style={{fontWeight: 'normal'}}>{p.children}</span></Typography>,
     link: p => -1 === p.href.indexOf('https://') ?
@@ -97,8 +133,13 @@ const renderersContent = {
             {p.children}
             <OpenInNew fontSize={'small'} style={{transform: 'scale(0.6) translate(-2px,4px)'}}/>
         </Link>,
+    table: p => <TableContainer><Table size={'small'} style={{margin: '0 0 24px 0'}}>{p.children}</Table></TableContainer>,
+    tableHead: p => <TableHead>{p.children}</TableHead>,
+    tableBody: p => <TableBody>{p.children}</TableBody>,
+    tableRow: p => <TableRow>{p.children}</TableRow>,
+    tableCell: p => <TableCell align={p.align} style={{fontWeight: p.isHeader ? 'bold' : 'inherit'}}>{p.children}</TableCell>,
 };
 
-const Markdown = ({source, content}) => <ReactMarkdown source={source} renderers={content ? renderersContent : renderers}/>;
+const Markdown = ({source, content = false}) => <ReactMarkdown source={source} renderers={content ? renderersContent : renderers}/>;
 
 export {Markdown}

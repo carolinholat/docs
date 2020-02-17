@@ -6,6 +6,7 @@ import {contentLoader} from "../ContentLoader";
 import {LinkList, ListItemLink} from "../Link";
 import {Markdown} from "../Markdown";
 import {useTranslation} from "react-i18next";
+import ErrorBoundary from "react-error-boundary";
 import {Layout} from "../Layout/Layout";
 
 const DocDetails = ({id}) => {
@@ -22,14 +23,24 @@ const DocDetails = ({id}) => {
     }, [setLoadedDoc, id]);
 
     return <Paper style={{margin: 12, padding: 24}}>
-        {loadedDoc === 0 ?
-            'loading' :
-            loadedDoc === false ?
-                'error' :
-                <Markdown source={loadedDoc} content/>}
+        <ErrorBoundary FallbackComponent={MyFallbackComponent}>
+            {loadedDoc === 0 ?
+                'loading' :
+                loadedDoc === false ?
+                    'error' :
+                    <Markdown source={loadedDoc} content/>}
+        </ErrorBoundary>
     </Paper>
 };
 
+const MyFallbackComponent = ({componentStack, error}) => (
+    <div>
+        <p><strong>An error occured!</strong></p>
+        <p>Here’s what we know…</p>
+        <p><strong>Error:</strong> {error.toString()}</p>
+        <p><strong>Stacktrace:</strong> {componentStack}</p>
+    </div>
+);
 const DocsOverview = () => {
     const {i18n} = useTranslation();
     return <Paper style={{margin: 12, padding: 24}}>

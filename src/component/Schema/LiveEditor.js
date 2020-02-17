@@ -330,7 +330,7 @@ const SchemaDataDebug = ({tabSize, fontSize, richIde, renderChange, theme}) => {
 
 const SchemaChanger = ({activeSchema, changeSchema, schemas, verticalSplit}) => {
 
-    return <FormControl fullWidth style={{padding: verticalSplit ? '20px 0 20px 3px' : '0 0 0 6px',}}>
+    return <FormControl fullWidth style={{padding: verticalSplit ? '20px 0 20px 3px' : '0 0 0 12px',}}>
         <Select value={activeSchema} onChange={e => changeSchema(e.target.value * 1)} displayEmpty>
             <MenuItem value="" disabled>
                 Examples
@@ -491,8 +491,8 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema}) => {
                             maxHeight: verticalSplit ? '35%' : 'none', paddingLeft: verticalSplit ? 0 : 6, marginRight: !verticalSplit && showInfo ? 12 : 0
                         }}>
                             <Button variant={'outlined'} size={'small'}
-                                    style={{marginLeft: 4, display: 'flex', lineHeight: 2.66, flexShrink: 0, minWidth: 0, color: 'inherit', border: 0, padding: 0, cursor: 'pointer'}}
-                                    onClick={() => toggleInfoBox(o => !o)}>
+                                    style={{display: 'flex', lineHeight: 2.66, flexShrink: 0, minWidth: 0, color: 'inherit', border: 0, padding: '0 0 0 4px', cursor: 'pointer'}}
+                                    onClick={() => toggleInfoBox(o => !o)} onMouseUp={unFocus}>
                                 {showInfo || verticalSplit ? 'Info:' : 'I·'}
 
                                 {showInfo ?
@@ -510,7 +510,7 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema}) => {
                     <div style={{
                         height: 'auto', flexGrow: 2, flexShrink: 0, display: 'flex', flexDirection: 'column', width: 'auto',
                     }}>
-                        <Typography component={'p'} variant={'overline'} style={{marginLeft: 4}}>
+                        <Typography component={'p'} variant={'overline'} style={{paddingLeft: 4}}>
                             Schema:
                         </Typography>
                         <SchemaJSONEditor
@@ -531,8 +531,8 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema}) => {
                         paddingLeft: verticalSplit ? 0 : 12, boxSizing: 'border-box',
                     }}>
                         <Button variant={'outlined'} size={'small'}
-                                style={{marginLeft: 4, display: 'flex', lineHeight: 2.66, minWidth: 0, flexShrink: 0, color: 'inherit', border: 0, padding: 0, cursor: 'pointer'}}
-                                onClick={() => toggleDataBox(o => !o)}>
+                                style={{display: 'flex', lineHeight: 2.66, minWidth: 0, flexShrink: 0, color: 'inherit', border: 0, padding: '0 0 0 4px', cursor: 'pointer'}}
+                                onClick={() => toggleDataBox(o => !o)} onMouseUp={unFocus}>
                             {showData || verticalSplit ? 'Data:' : 'D·'}
 
                             {showData ?

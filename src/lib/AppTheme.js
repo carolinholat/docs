@@ -23,6 +23,12 @@ const universal = {
         },
         h6: {
             fontSize: '1.25rem'
+        },
+        body1: {
+            letterSpacing: '0.0185em'
+        },
+        body2: {
+            letterSpacing: '0.01em'
         }
     },
     shape: {
@@ -43,11 +49,11 @@ const themeDark = createMuiTheme({
             dark: "#002634",
         },
         background: {
-            paper: '#001f29',
+            paper: '#04252f',
             default: '#001820',
         },
         text: {
-            primary: '#e8e8e8',
+            primary: '#c6c4c4',
             secondary: '#acc9c5',
         },
         action: {

@@ -2,6 +2,16 @@ import React from 'react';
 import AceEditor from "react-ace";
 import ace from 'ace-builds/src-noconflict/ace';
 import "ace-builds/src-noconflict/mode-json";
+import "ace-builds/src-noconflict/mode-css";
+import "ace-builds/src-noconflict/mode-dockerfile";
+import "ace-builds/src-noconflict/mode-html";
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/mode-jsx";
+import "ace-builds/src-noconflict/mode-mysql";
+import "ace-builds/src-noconflict/mode-php";
+import "ace-builds/src-noconflict/mode-powershell";
+import "ace-builds/src-noconflict/mode-scss";
+import "ace-builds/src-noconflict/mode-yaml";
 import "ace-builds/src-noconflict/ext-error_marker";
 import "ace-builds/src-noconflict/ext-static_highlight";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -18,13 +28,15 @@ import {useTheme} from "@material-ui/core";
 ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/");
 ace.config.setModuleUrl('ace/mode/javascript_worker', "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/worker-javascript.js");
 
+const supportedModes = ['json', 'css', 'dockerfile', 'html', 'javascript', 'jsx', 'mysql', 'php', 'powershell', 'scss', 'yaml'];
 const themes = ['clouds_midnight', 'cobalt', 'gruvbox', 'monokai',];
 
 const themesLight = ['chrome', 'github'];
 
 const RichCodeEditor = ({
-                            value, onChange, name, readOnly,
-                            tabSize = 2, fontSize = 13, theme = 'cobalt', mode = 'json', raw = false, renderChange = 0,
+                            value, onChange, name, readOnly, style = {},
+                            tabSize = 2, fontSize = 13, theme = 'clouds_midnight', mode = 'json', raw = false, renderChange = 0,
+                            minLines = 10, maxLines = undefined, getEditor,
                         }) => {
     const [editor, setEditor] = React.useState({});
     const {palette} = useTheme();
@@ -60,21 +72,26 @@ const RichCodeEditor = ({
         showPrintMargin={false}
         highlightActiveLine={true}
         orientation={'below'}
-        style={{width: '100%', height: 'auto', flexGrow: 2, lineHeight: '1.27em'}}
+        style={{width: '100%', height: 'auto', flexGrow: 2, lineHeight: '1.27em', ...style}}
         width={'100%'}
-        minLines={10}
+        minLines={minLines}
+        maxLines={maxLines}
         enableSnippets
         enableBasicAutocompletion
         enableLiveAutocompletion
         wrapEnabled
         readOnly={readOnly}
-        onLoad={editor => setEditor(editor)}
+        onLoad={editor => {
+            setEditor(editor);
+            if(getEditor) {
+                getEditor(editor)
+            }
+        }}
         tabSize={tabSize}
         setOptions={{
             wrap: true,
             autoScrollEditorIntoView: true,
             enableMultiselect: true,
-            wrapBehavioursEnabled: true,
             useWorker: false,// currently shows errors for valid JSON, to turn syntax checking on change to `true` and check imports/workers at top of page
             mergeUndoDeltas: true,
             showLineNumbers: true,
@@ -84,4 +101,4 @@ const RichCodeEditor = ({
     />
 };
 
-export {RichCodeEditor, themes}
+export {RichCodeEditor, themes, supportedModes}
