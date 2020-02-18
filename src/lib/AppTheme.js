@@ -7,16 +7,16 @@ const universal = {
     typography: {
         fontSize: 14,
         h1: {
-            fontSize: '3.2rem'
+            fontSize: '2.7rem'
         },
         h2: {
-            fontSize: '2.5rem'
+            fontSize: '2.3rem'
         },
         h3: {
-            fontSize: '2.25rem'
+            fontSize: '2.1rem'
         },
         h4: {
-            fontSize: '2rem'
+            fontSize: '1.75rem'
         },
         h5: {
             fontSize: '1.75rem'

@@ -4,10 +4,14 @@ import {PageTitle} from "../Layout/PageContent";
 import Nav from "../Nav";
 import NavProject from "../NavProject";
 import React from "react";
+import Head from "../Layout/Head";
 
 function PageMain() {
     return (
         <Layout>
+            <Head title={'UI-Schema Project Page'}
+                  description={'Form generator and widget system using JSON-Schema. Build complex forms and UIs with ease in React!'}
+            />
             <Container maxWidth={'md'} fixed style={{display: 'flex', flexDirection: 'column', flexGrow: 2,}}>
                 <PageTitle title={'UI-Schema'}/>
 

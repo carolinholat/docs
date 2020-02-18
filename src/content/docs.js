@@ -1,7 +1,9 @@
+import {demoTextField} from "./docs/widgets/TextFieldDemo";
+import {demoOptionsList} from "./docs/widgets/OptionsListDemo";
+import {demoSwitch} from "./docs/widgets/SwitchDemo";
+
 const contentDocs = [
     ['overview', 'Overview'],
-    ['quick-start', 'Quick Start'],
-    ['philosophy', 'Philosophy'],
     ['schema', 'Schema'],
     ['design-systems', 'Design-Systems'],
     ['widgets', 'Widgets'],
@@ -11,4 +13,16 @@ const contentDocs = [
     ['core', 'Core'],
 ];
 
-export {contentDocs}
+const contentDocsWidgets = [
+    ['widgets/TextField', 'TextField Widget', {
+        demoEditor: demoTextField
+    }],
+    ['widgets/Switch', 'Switch Widget', {
+        demoEditor: demoSwitch
+    }],
+    ['widgets/OptionsList', 'Options List Widget', {
+        demoEditor: demoOptionsList
+    }],
+];
+
+export {contentDocs, contentDocsWidgets}

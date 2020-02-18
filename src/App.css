@@ -100,3 +100,14 @@ button:focus {
     background: rgba(20, 20, 20, 0.25);
     transition: 0.15s ease-out background-color;
 }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}

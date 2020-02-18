@@ -4,10 +4,14 @@ import {PageTitle} from "../Layout/PageContent";
 import Nav from "../Nav";
 import NavProject from "../NavProject";
 import React from "react";
+import Head from "../Layout/Head";
 
 function PageNotFound() {
     return (
         <Layout>
+            <Head title={'Page Not Found · UI-Schema'}
+                  description={''}
+            />
             <Container maxWidth={'md'} fixed style={{display: 'flex', flexDirection: 'column', flexGrow: 2,}}>
                 <PageTitle title={'404 Not Found'}/>
 

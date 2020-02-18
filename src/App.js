@@ -1,8 +1,7 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 import './App.css';
-import {Container, Paper, Typography,} from "@material-ui/core";
-import {Refresh} from "@material-ui/icons";
+import {Container, Paper,} from "@material-ui/core";
 import {
     BrowserRouter as Router,
     Switch,
@@ -14,14 +13,13 @@ import AppTheme from "./lib/AppTheme";
 import {I18nRedir} from "./lib/I18nRedir";
 import {Layout} from "./component/Layout/Layout";
 import {DrawerProvider} from "./component/Layout/Drawer";
+import {LoadingCircular} from "./component/LoadingCircular";
+import {HeadlinesProvider} from "./component/LinkableHeadline";
 
 const LoadingPage = ({title}) => <Layout>
     <Container maxWidth={'md'} fixed style={{display: 'flex', flexDirection: 'column', flexGrow: 2,}}>
-        <Paper style={{margin: 12, padding: 24}}>
-            <Refresh className={'refresh-spin'} fontSize={'large'} style={{display: 'block', margin: '24px auto'}}/>
-            <Typography component={'p'} variant={'overline'} style={{textAlign: 'center', fontSize: '1em'}}>
-                {title}
-            </Typography>
+        <Paper style={{margin: 12, padding: 24, display: 'flex', flexDirection: 'column', overflowX: 'auto'}}>
+            <LoadingCircular title={title}/>
         </Paper>
     </Container>
 </Layout>;
@@ -35,11 +33,17 @@ const pages = {
     Home: PageLoader(() => import('./component/Page/PageMain'), 'Loading Page'),
     LiveEdit: PageLoader(() => import('./component/Page/PageLiveEdit'), 'Loading Live-Editor'),
     DocsOverview: PageLoader(() => import('./component/Docs/DocsOverview'), 'Loading Docs'),
+    Impress: PageLoader(() => import('./component/Page/PageLaw').then(r => r.PageImpress), 'Loading Page'),
+    Privacy: PageLoader(() => import('./component/Page/PageLaw').then(r => r.PagePrivacy), 'Loading Page'),
+    QuickStart: PageLoader(() => import('./component/Page/PageQuickStart'), 'Loading Quick Start'),
 };
 
 const PageRoutes = ({match}) => <Switch>
     <Route path={"/" + match.params.lng + "/examples/:schema?"} component={pages.LiveEdit}/>
-    <Route path={"/" + match.params.lng + "/docs/:doc?"} component={pages.DocsOverview}/>
+    <Route path={"/" + match.params.lng + "/docs/(.*)?"} component={pages.DocsOverview}/>
+    <Route path={"/" + match.params.lng + "/quick-start"} component={pages.QuickStart}/>
+    <Route path={"/" + match.params.lng + "/impress"} component={pages.Impress}/>
+    <Route path={"/" + match.params.lng + "/privacy"} component={pages.Privacy}/>
     <Route path={"/" + match.params.lng} exact component={pages.Home}/>
     <Route path={"/" + match.params.lng} component={PageNotFound}/>
 </Switch>;
@@ -63,11 +67,13 @@ function App() {
             </React.Suspense>
 
             <DrawerProvider>
-                <AppTheme>
-                    <React.Suspense fallback={null}>
-                        <Route path="/:lng" component={PageRoutes}/>
-                    </React.Suspense>
-                </AppTheme>
+                <HeadlinesProvider>
+                    <AppTheme>
+                        <React.Suspense fallback={null}>
+                            <Route path="/:lng" component={PageRoutes}/>
+                        </React.Suspense>
+                    </AppTheme>
+                </HeadlinesProvider>
             </DrawerProvider>
         </I18nProvider>
     </Router>

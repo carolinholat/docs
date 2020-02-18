@@ -388,7 +388,7 @@ const EditorHandler = ({matchedSchema, activeSchema, setActiveSchema}) => {
     const [showData, setDataBox] = React.useState(true);
     const [jsonEditHeight, setJsonEditHeight] = React.useState(350);
     const [renderChange, setRenderChange] = React.useState(0);// Ace Editor Re-Size Re-Calc
-    const [editorTheme, setEditorTheme] = React.useState('clouds_midnight');
+    const [editorTheme, setEditorTheme] = React.useState('gruvbox');
     const infoBox = React.useRef();// to scroll to top of info text when toggling/switching sides
 
     // default schema state - begin

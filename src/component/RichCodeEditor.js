@@ -1,6 +1,36 @@
 import React from 'react';
+import {useTheme} from "@material-ui/core";
 import AceEditor from "react-ace";
-import ace from 'ace-builds/src-noconflict/ace';
+// todo: update react-ace to v8, using ace-builds instead of brace, creates strange `this.session = null` exceptions then and now
+import 'brace/ext/language_tools';
+import 'brace/ext/error_marker';
+import 'brace/ext/static_highlight';
+import 'brace/ext/searchbox';
+import 'brace/ext/statusbar';
+import 'brace/mode/json';
+import 'brace/mode/css';
+import 'brace/mode/dockerfile';
+import 'brace/mode/html';
+import 'brace/mode/javascript';
+import 'brace/mode/jsx';
+import 'brace/mode/mysql';
+import 'brace/mode/php';
+import 'brace/mode/powershell';
+import 'brace/mode/scss';
+import 'brace/mode/yaml';
+import 'brace/theme/github';
+import 'brace/theme/chrome';
+import 'brace/theme/clouds_midnight';
+import 'brace/theme/cobalt';
+import 'brace/theme/gruvbox';
+import 'brace/theme/monokai';
+
+/*import ace from 'ace-builds/src-noconflict/ace';
+import "ace-builds/src-noconflict/ext-language_tools";
+import "ace-builds/src-noconflict/ext-error_marker";
+import "ace-builds/src-noconflict/ext-static_highlight";
+import "ace-builds/src-noconflict/ext-searchbox";
+import "ace-builds/src-noconflict/ext-statusbar";
 import "ace-builds/src-noconflict/mode-json";
 import "ace-builds/src-noconflict/mode-css";
 import "ace-builds/src-noconflict/mode-dockerfile";
@@ -12,21 +42,15 @@ import "ace-builds/src-noconflict/mode-php";
 import "ace-builds/src-noconflict/mode-powershell";
 import "ace-builds/src-noconflict/mode-scss";
 import "ace-builds/src-noconflict/mode-yaml";
-import "ace-builds/src-noconflict/ext-error_marker";
-import "ace-builds/src-noconflict/ext-static_highlight";
-import "ace-builds/src-noconflict/ext-language_tools";
-import "ace-builds/src-noconflict/ext-searchbox";
-import "ace-builds/src-noconflict/ext-statusbar";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/theme-chrome";
 import "ace-builds/src-noconflict/theme-clouds_midnight";
 import "ace-builds/src-noconflict/theme-cobalt";
 import "ace-builds/src-noconflict/theme-gruvbox";
 import "ace-builds/src-noconflict/theme-monokai";
-import {useTheme} from "@material-ui/core";
 
 ace.config.set("basePath", "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/");
-ace.config.setModuleUrl('ace/mode/javascript_worker', "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/worker-javascript.js");
+ace.config.setModuleUrl('ace/mode/javascript_worker', "https://cdn.jsdelivr.net/npm/ace-builds@1.4.8/src-noconflict/worker-javascript.js");*/
 
 const supportedModes = ['json', 'css', 'dockerfile', 'html', 'javascript', 'jsx', 'mysql', 'php', 'powershell', 'scss', 'yaml'];
 const themes = ['clouds_midnight', 'cobalt', 'gruvbox', 'monokai',];
@@ -35,7 +59,7 @@ const themesLight = ['chrome', 'github'];
 
 const RichCodeEditor = ({
                             value, onChange, name, readOnly, style = {},
-                            tabSize = 2, fontSize = 13, theme = 'clouds_midnight', mode = 'json', raw = false, renderChange = 0,
+                            tabSize = 2, fontSize = 13, theme = 'gruvbox', mode = 'json', raw = false, renderChange = 0,
                             minLines = 10, maxLines = undefined, getEditor,
                         }) => {
     const [editor, setEditor] = React.useState({});

@@ -1,6 +1,8 @@
 # Overview
 
-UI-Schema is a UI and Form generator for React using JSON-Schema. In the core is a widget system which supports creating complex interactions and custom inputs.
+UI and Form generator for React using [JSON-Schema](https://json-schema.org/understanding-json-schema/index.html) build around a powerful widget system, made for beautiful and great experiences!
+
+Widgets are defined per design-system, use the design-system binding you need or create your own easily.
 
 JSON-Schema included keywords are used to describe the data and create the UI based on the data-schema and special UI keywords. A data-schema with integrated ui-schema enforces the consistency of the UX across different apps and devices.
 
@@ -10,48 +12,48 @@ The package `@ui-schema/ui-schema` supports rendering widgets for JSON-schema `t
 
 It is possible to connect any design system to the renderer, included or planned support:
 
-- `@ui-schema/ds-material` adds binding to [@material-ui/core](https://material-ui.com/) to use [Material Design](https://material.io/) **in dev**
-- `@ui-schema/ds-bootstrap` adds binding to plain bootstrap semantic HTMLs to use with any Bootstrap theme **in dev**
-- `@ui-schema/ds-blueprint` adds binding to [blueprintjs](https://blueprintjs.com/docs/) **would be nice**
-- `@ui-schema/ds-semanticui` adds binding to [semantic-ui](https://react.semantic-ui.com/usage/) **would be nice**
-- `@ui-schema/ds-antdesign` adds binding to [Ant Design](https://ant.design/docs/react/introduce) **would be nice**
-- `@ui-schema/ds-pulse` adds binding to [.pulse](https://pulse.heartbeat.ua/components/box) **would be nice**
+- `@ui-schema/ds-material` adds binding to [@material-ui/core](https://material-ui.com/) to use [Material Design](https://material.io/) - **in dev**
+- `@ui-schema/ds-bootstrap` adds binding to plain bootstrap semantic HTMLs to use with any Bootstrap theme - **in dev**
+- `@ui-schema/ds-blueprint` adds binding to [blueprintjs](https://blueprintjs.com/docs/) - **would be nice**
+- `@ui-schema/ds-semanticui` adds binding to [semantic-ui](https://react.semantic-ui.com/usage/) - **would be nice**
+- `@ui-schema/ds-antdesign` adds binding to [Ant Design](https://ant.design/docs/react/introduce) - **would be nice**
+- `@ui-schema/ds-pulse` adds binding to [.pulse](https://pulse.heartbeat.ua/components/box) - **would be nice**
 
 📚 [How To Install A Design System](/docs/design-systems)
 
-> You want to add a design system binding?
->
-> Reach out to us, we help you to get started and we are open to make it an official binding!
->
-> [I want to help!](/contribute)
+A design-system bundles multiple widgets, select the design-system binding you need, here is an overview of all widgets/types.
+
+Each widget handles it's own sub-schema, e.g. the `string` type widget only needs to know how to handle it's own string.
 
 A match by `widget` supersedes the `type` matching.
 
-Match by `type` in schema and each type component must handle its own formats:
+## Widget List
+
+Widgets for `type`:
 
 | Type         | Format      | Component            | Material-UI | Bootstrap | ? |
 | :---         | :---        | :---                 | ---: | ---: | ---: | 
-| `string`     | -           | [Normal Text Input](/docs/widgets/TextField)    | ⬛ | ⬜ | ⬜ |
-| `string`     | `date`      | Date Input           | ⬛ | ⬜ | ⬜ |
-| `string`     | `date-time` | Date+Time Input      | ⬜ | ⬜ | ⬜ |
-| `string`     | `time`      | Time Input           | ⬜ | ⬜ | ⬜ |
-| `string`     | `email`     | Email Input          | ⬜ | ⬜ | ⬜ |
-| `string`     | `tel`       | Tel. No. Input       | ⬜ | ⬜ | ⬜ |
-| `number`     | -           | Number Input         | ⬛ | ⬜ | ⬜ |
-| `bool` or `boolean` | -    | Toggle Input (true/false) | ⬛ | ⬜ | ⬜ |
+| `string`     | -           | [Normal Text](/docs/widgets/TextField)    | ⬛ | ⬜ | ⬜ |
+| `string`     | `date`      | Date           | ⬛ | ⬜ | ⬜ |
+| `string`     | `date-time` | Date+Time      | ⬜ | ⬜ | ⬜ |
+| `string`     | `time`      | Time           | ⬜ | ⬜ | ⬜ |
+| `string`     | `email`     | Email          | ⬜ | ⬜ | ⬜ |
+| `string`     | `tel`       | Tel. No.       | ⬜ | ⬜ | ⬜ |
+| `number`     | -           | [Number](/docs/widgets/TextField)     | ⬛ | ⬜ | ⬜ |
+| `bool` or `boolean` | -    | [Switch / Toggle](/docs/widgets/Switch) | ⬛ | ⬜ | ⬜ |
 | `object`     | -           | Native Objects       | ⬛ | ⬜ | ⬜ |
 | `array`      | -           | only supported through widgets | - | - | - |
 
-Included widgets (match by `widget` in schema), each widget could have multiple types and formats:
+Widgets for `widget`, special UI's and specific type handling:
 
 | Widget     | Component | Expected Type(s) | Formats | Material-UI | Bootstrap | ? |
 | :---       | :----     | ---: | ---: | ---: | ---: | ---: |
 | StringList | multiple strings as list  | `array<string>` | - | ⬜ | ⬜ | ⬜ |
-| Text       | multiline text input  | `string` | - | ⬛ | ⬜ | ⬜ |
+| Text       | [multiline text](/docs/widgets/TextField)  | `string` | - | ⬛ | ⬜ | ⬜ |
 | TextRich   | multiline rich text editor | `string` or `array` or `object` | **`html`** or `md` | ⬜ | ⬜ | ⬜ |
 | TextRichInline | single-line rich text editor | `string` or `array` or `object` | **`html`** or `md` | ⬜ | ⬜ | ⬜ |
 | Code       | text editor with syntax highlight | `string` or `array` or `object` | *multiple* | ⬜ | ⬜ | ⬜ |
-| Color      | color input  | `string` | - | ⬜ | ⬜ | ⬜ |
+| Color      | color selector  | `string` | - | ⬜ | ⬜ | ⬜ |
 | File       | single file selector  | `object` | - | ⬜ | ⬜ | ⬜ |
 | Files      | multiple files selector  | `object` | - | ⬜ | ⬜ | ⬜ |
 | Folder     | single folder selector  | `object` | - | ⬜ | ⬜ | ⬜ |
@@ -68,8 +70,8 @@ Included widgets (match by `widget` in schema), each widget could have multiple 
 | Step       | list with sub-schema as steppers | `array` or `object` | - | ⬜ | ⬜ | ⬜ |
 | Tabs       | list with sub-schema as tabs | `array` or `object` | - | ⬜ | ⬜ | ⬜ |
 | BoolIcon   |   | `bool` | - | ⬜ | ⬜ | ⬜ |
-| OptionsCheck | group of checkboxes  | `array` | - | ⬛ | ⬜ | ⬜ |
-| OptionsRadio | group of radio buttons  | `string` | - | ⬛ | ⬜ | ⬜ |
+| OptionsCheck | [group of checkboxes](/docs/widgets/OptionsList)  | `array` | - | ⬛ | ⬜ | ⬜ |
+| OptionsRadio | [group of radio buttons](/docs/widgets/OptionsList)  | `string` | - | ⬛ | ⬜ | ⬜ |
 | Select     |  select one out of n | `string` | - | ⬛ | ⬜ | ⬜ |
 | SelectMulti  |   | `array` (`List`) | - | ⬛ | ⬜ | ⬜ |
 | [SelectGroup](https://material-ui.com/components/selects/#grouping)  |   | `array` | - | ⬜ | ⬜ | ⬜ |

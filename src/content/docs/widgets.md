@@ -1,8 +1,8 @@
 # Widget System
 
->
-> ✔ working, not expected to change (that much) breaking in the near future
->
+> 📌 Here for the [**list of widgets**](/docs/overview#widget-list)?
+
+This document is about creating own widgets, design-system bindings and changing the existing ones.
 
 A widget is responsible to render the UI and either display or make the editing of the data possible, it handles one schema level and may connect to another nested SchemaEditor if it handles a special object/group.
 

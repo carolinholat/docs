@@ -1,17 +1,21 @@
 import ReactMarkdown from "react-markdown";
 import {
     TableContainer, Table, TableHead, TableBody, TableRow, TableCell,
-    Link, Typography, Button, useTheme, Paper
+    Link, Typography, Button, useTheme, Paper, Divider,
 } from "@material-ui/core";
 import {UnfoldLess, UnfoldMore, OpenInNew} from "@material-ui/icons";
 import {Link as InternalLink} from './Link'
 import React from "react";
 import {useTranslation} from "react-i18next";
 import {RichCodeEditor, supportedModes} from "./RichCodeEditor";
+import {LinkableHeadline} from "./LinkableHeadline";
+import {AccessTooltipIcon} from "./Tooltip";
 
 const InlineCode = ({variant, ...p}) => {
     const {palette} = useTheme();
-    return <Typography component={'code'} variant={variant} style={{background: palette.divider}} gutterBottom>{p.children}</Typography>
+    return <Typography component={'code'} variant={variant} style={{
+        background: palette.divider
+    }} gutterBottom>{p.children}</Typography>
 };
 
 const languageMapping = {
@@ -34,12 +38,14 @@ const Code = ({variant, ...p}) => {
         </Typography> :
         <div style={{position: 'relative'}}>
             <RichCodeEditor value={p.value} readOnly mode={currentMode}
-                            fontSize={14} minLines={2} maxLines={showAll ? 3000 : 30}
+                            fontSize={14} minLines={1} maxLines={showAll ? 3000 : 30}
                             getEditor={setEditor}
                             style={{margin: '24px 0', transition: 'height 0.4s linear 0s'}}/>
             {typeof showAll === 'boolean' || (editor && editor.container && scrollBar && scrollBar.clientHeight && scrollBar.clientWidth) ?
-                <Button style={{position: 'absolute', bottom: 3, right: 20, minWidth: 'auto'}} onClick={() => setShowAll(p => !p)}>
-                    {showAll ? <UnfoldLess fontSize={'small'}/> : <UnfoldMore fontSize={'small'}/>}
+                <Button style={{position: 'absolute', bottom: 27, right: 20, minWidth: 'auto'}} onClick={() => setShowAll(p => !p)}>
+                    <AccessTooltipIcon title={showAll ? 'Show less lines' : 'Show all lines'}>
+                        {showAll ? <UnfoldLess fontSize={'small'}/> : <UnfoldMore fontSize={'small'}/>}
+                    </AccessTooltipIcon>
                 </Button> : null}
         </div>
 };
@@ -75,20 +81,11 @@ const InternalLocaleLink = (p) => {
 
 const StyledBlockquote = p => {
     const theme = useTheme();
-    return <Paper elevation={3}>
+    return <Paper elevation={3} style={{margin: '12px 0 24px 0'}}>
         <Typography
             {...p} component={'blockquote'} variant={'body1'}
-            style={{margin: '12px 0 24px 0', padding: '8px 0 2px 30px', position: 'relative', borderLeft: '0 solid ' + theme.palette.divider}}/>
+            style={{padding: '8px 12px 2px 30px', position: 'relative', borderLeft: '0 solid ' + theme.palette.divider}}/>
     </Paper>
-};
-
-const copyToClipboard = str => {
-    const el = document.createElement('textarea');
-    el.value = str;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
 };
 
 // see: https://github.com/rexxars/react-markdown#node-types
@@ -98,9 +95,10 @@ const renderers = {
     blockquote: StyledBlockquote,
     inlineCode: p => <InlineCode variant={'body2'} {...p}/>,
     code: p => <Code variant={'body2'} {...p}/>,
+    thematicBreak: p => <Divider {...p}/>,
     heading: ({level, ...p}) => <Typography {...p} component={'h' + (level + 1)} variant={'subtitle' + (level)} style={{textDecoration: 'underline', marginTop: 48 / level}} gutterBottom/>,
     list: p => p.ordered ? <ol style={{margin: '10px'}}>{p.children}</ol> : <ul style={{margin: '10px 0'}}>{p.children}</ul>,
-    listItem: p => <Typography component={'li'} variant={'body2'} style={{fontWeight: 'bold'}}><span style={{fontWeight: 'normal'}}>{p.children}</span></Typography>,
+    listItem: p => <Typography component={'li'} variant={'body2'} style={{fontWeight: 'bold'}}><span style={{fontWeight: 'normal', display: 'block'}}>{p.children}</span></Typography>,
     link: p => -1 === p.href.indexOf('https://') ?
         <InternalLocaleLink to={p.href} primary={p.children} color={'primary'} style={{fontWeight: 'bold'}}/> :
         <Link href={p.href} target={'_blank'} color={'primary'} style={{fontWeight: 'bold'}}>
@@ -115,18 +113,10 @@ const renderersContent = {
     blockquote: StyledBlockquote,
     inlineCode: p => <InlineCode variant={'body1'} {...p}/>,
     code: p => <Code variant={'body1'} {...p}/>,
-    heading: ({level, ...p}) => {
-        const id = p.children && p.children[0] && p.children[0].props && p.children[0].props.value ?
-            p.children[0].props.value.toLowerCase().replace(/\s/g, '-')
-            : undefined;
-        return <Typography
-            {...p} component={'h' + (level + 1)} variant={'h' + (level)}
-            onClick={() => id ? copyToClipboard(window.location.protocol + '//' + window.location.host + window.location.pathname + '#' + id) : undefined}
-            id={id} gutterBottom style={{marginTop: 48 / level}}
-        />
-    },
+    thematicBreak: p => <Divider {...p}/>,
+    heading: LinkableHeadline,
     list: p => p.ordered ? <ol style={{margin: '10px'}}>{p.children}</ol> : <ul style={{margin: '10px 0'}}>{p.children}</ul>,
-    listItem: p => <Typography component={'li'} variant={'body1'} style={{fontWeight: 'bold'}}><span style={{fontWeight: 'normal'}}>{p.children}</span></Typography>,
+    listItem: p => <Typography component={'li'} variant={'body1'} style={{fontWeight: 'bold'}}><span style={{fontWeight: 'normal', display: 'block'}}>{p.children}</span></Typography>,
     link: p => -1 === p.href.indexOf('https://') ?
         <InternalLocaleLink to={p.href} primary={p.children} color={'primary'} style={{fontWeight: 'bold'}}/> :
         <Link href={p.href} target={'_blank'} color={'primary'} style={{fontWeight: 'bold'}}>
