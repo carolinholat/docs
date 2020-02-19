@@ -4,7 +4,7 @@
 
 This document is about creating own widgets, design-system bindings and changing the existing ones.
 
-A widget is responsible to render the UI and either display or make the editing of the data possible, it handles one schema level and may connect to another nested SchemaEditor if it handles a special object/group.
+A widget is responsible to render the UI and either display or make the editing of the data possible, it handles one schema level and may connect to another nested SchemaEditor.
 
 Through the modular approach and easy definition of a new widget, the widget system can be used to create complex, separated UI components, where the orchestration can be done from an external system like some backend API.
 

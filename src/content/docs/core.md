@@ -102,6 +102,14 @@ const Comp = withWidgets(
 );
 ```
 
+### Editor Translation Provider
+
+- Provider: `EditorTransProvider`
+- Hook: `useSchemaTrans`
+- HOC: `withTrans`
+- Properties/ContextData:
+    - `t` : `function` translator function
+    
 ## Main Schema Editor
 
 ### SchemaEditor

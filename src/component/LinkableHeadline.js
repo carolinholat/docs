@@ -66,9 +66,12 @@ const LinkableHeadline = ({level, children, ...p}) => {
         {...p} component={'h' + (level + 1)} variant={'h' + (level)}
         onMouseEnter={() => setHovering(true)}
         onMouseLeave={() => setHovering(false)}
-        id={id} gutterBottom style={{
-        marginTop: level === 1 ? 38 : 38 / (level / 1.2),
-        marginBottom: level === 1 ? 32 : 38 / (level / 2), marginLeft: -24, paddingLeft: 24, position: 'relative'
+        id={id} style={{
+        marginTop: level === 1 ? 38 : 18 * (6 / level),
+        marginBottom: level === 1 ? 44 :
+            level < 5 ? 12 * (6 / level) :
+                16 * (6 / level),
+        marginLeft: -24, paddingLeft: 24, position: 'relative'
     }}
     >
         {id ? <Button
